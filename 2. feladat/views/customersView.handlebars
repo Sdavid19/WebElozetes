@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+</head>
+
+<body>
+    {{> navbar }}
+
+<div style="display: grid;place-items:center">
+    {{> tableName }}
+    <table class="table" id="table" style="max-width: 1000px;">
+        <tr>
+            {{#keys}}
+            <th class="text-center">{{ . }}</th>
+            {{/keys}}
+        </tr>
+
+        <tr>
+            <td>#</td>
+            <td>
+                <input id="newFName" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newLName" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newCompany" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newAddress" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newCity" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newState" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newCountry" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newPostalCode" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newPhone" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newFax" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newEmail" type="text" class="form-control">
+            </td>
+            <td>
+                <input id="newSupportRepId" type="number" class="form-control">
+            </td>
+            <td colspan="">
+                <button class="btn btn-primary" onclick='createRecord()'>Create</button>
+            </td>
+        </tr>
+
+        {{#data}}
+        <tr id="{{ CustomerId }}">
+            <td>{{ CustomerId }}</td>
+            <td>
+                <input id="editFName{{CustomerId}}" type="text" class="form-control" value="{{FirstName}}">
+            </td>
+            <td>
+                <input id="editLName{{CustomerId}}" type="text" class="form-control" value="{{LastName}}">
+            </td>
+            <td>
+                <input id="editCompany{{CustomerId}}" type="text" class="form-control" value="{{Company}}">
+            </td>
+            <td>
+                <input id="editAddress{{CustomerId}}" type="text" class="form-control" value="{{Address}}">
+            </td>
+            <td>
+                <input id="editCity{{CustomerId}}" type="text" class="form-control" value="{{City}}">
+            </td>
+            <td>
+                <input id="editState{{CustomerId}}" type="text" class="form-control" value="{{State}}">
+            </td>
+            <td>
+                <input id="editCountry{{CustomerId}}" type="text" class="form-control" value="{{Country}}">
+            </td>
+            <td>
+                <input id="editPostalCode{{CustomerId}}" type="text" class="form-control" value="{{PostalCode}}">
+            </td>
+            <td>
+                <input id="editPhone{{CustomerId}}" type="text" class="form-control" value="{{Phone}}">
+            </td>
+            <td>
+                <input id="editFax{{CustomerId}}" type="text" class="form-control" value="{{Fax}}">
+            </td>
+            <td>
+                <input id="editEmail{{CustomerId}}" type="text" class="form-control" value="{{Email}}">
+            </td>
+            <td>
+                <input id="editSupportRepId{{CustomerId}}" type="number" class="form-control" value="{{SupportRepId}}">
+            </td>
+            <td><button class="btn btn-primary" onclick="updateRecord('{{ CustomerId }}')">Edit</button></td>
+            <td><button class="btn btn-danger" onclick="deleteRecord('{{ CustomerId }}')">Delete</button></td>
+        </tr>
+        {{/data}}
+    </table>
+</div>
+
+    <script>
+    async function deleteRecord(id) {
+        try {
+
+            const response = await fetch(`/customers/delete/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete data');
+            }
+            else {
+                document.getElementById(id).remove();
+            }
+
+        } catch (error) {
+            console.error('Error deleting resource:', error.message);
+        }
+    }
+
+    async function createRecord() {
+        try {
+            let fName = document.getElementById(`newFName`).value
+            let lName = document.getElementById(`newLName`).value
+            let company = document.getElementById(`newCompany`).value
+            let address = document.getElementById(`newAddress`).value
+            let city = document.getElementById(`newCity`).value
+            let state = document.getElementById(`newState`).value
+            let country = document.getElementById(`newCountry`).value
+            let postalCode = document.getElementById(`newPostalCode`).value
+            let phone = document.getElementById(`newPhone`).value
+            let fax = document.getElementById(`newFax`).value
+            let email = document.getElementById(`newEmail`).value
+            let supportRepId = document.getElementById(`newSupportRepId`).value
+
+            let data = {
+                FirstName: fName,
+                LastName: lName,
+                Company: company,
+                Address: address,
+                City: city,
+                State: state,
+                Country: country,
+                PostalCode: postalCode,
+                Phone: phone,
+                Fax: fax,
+                Email: email,
+                SupportRepId: supportRepId
+            };
+
+            const response = await fetch(`/customers/insert`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to insert data');
+            }
+            else {
+                location.reload();
+            }
+
+        } catch (error) {
+            console.error('Error inserting resource:', error.message);
+        }
+    }
+
+
+    async function updateRecord(id) {
+        try {
+
+            let fName = document.getElementById(`editFName${id}`).value
+            let lName = document.getElementById(`editLName${id}`).value
+            let company = document.getElementById(`editCompany${id}`).value
+            let address = document.getElementById(`editAddress${id}`).value
+            let city = document.getElementById(`editCity${id}`).value
+            let state = document.getElementById(`editState${id}`).value
+            let country = document.getElementById(`editCountry${id}`).value
+            let postalCode = document.getElementById(`editPostalCode${id}`).value
+            let phone = document.getElementById(`editPhone${id}`).value
+            let fax = document.getElementById(`editFax${id}`).value
+            let email = document.getElementById(`editEmail${id}`).value
+            let supportRepId = document.getElementById(`editSupportRepId${id}`).value
+
+
+            let data = {
+                FirstName: fName,
+                LastName: lName,
+                Company: company,
+                Address: address,
+                City: city,
+                State: state,
+                Country: country,
+                PostalCode: postalCode,
+                Phone: phone,
+                Fax: fax,
+                Email: email,
+                SupportRepId: supportRepId
+            };
+
+            const response = await fetch(`/customers/update/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update data');
+            }
+
+        } catch (error) {
+            console.error('Error update resource:', error.message);
+        }
+    }
+    </script>
+    
+<style>
+    input{
+        min-width: 100px;
+    }
+</style>
+</body>
+
+</html>
